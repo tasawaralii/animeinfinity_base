@@ -22,4 +22,13 @@ $router->get("/", function () {
     Helper::successResponse("Working");
 });
 
+
+$router->post("/add/anime", [$animeController, "addAnime"]);
+$router->get("/list/anime", [$animeController, "getAnimes"]);
+$router->get("/anime/{anime_id}", [$animeController, "getAnimeById"]);
+$router->post("/anime/{anime_id}/add/season", [$animeController, "addSeasonToAnime"]);
+
+$router->get("/season/{season_id}", [$animeController, 'getSeasonById']);
+$router->post("/season/{season_id}/add/episode", [$animeController, "addEpisodeToSeason"]);
+
 $router->resolve();

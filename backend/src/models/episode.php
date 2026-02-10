@@ -1,6 +1,6 @@
 <?php
 
-class AnimeDB
+class EpisodeDB
 {
     // Table Name: episodes
     // Columns: episode_id, season_id, episode_name, episode_number, img, air_date, overview, content_id

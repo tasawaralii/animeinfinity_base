@@ -1,10 +1,10 @@
 <?php
 
-require_once PROJECT_ROOT . "/models/anime.php";
-require_once PROJECT_ROOT . "/models/season.php";
-require_once PROJECT_ROOT . "/models/episode.php";
-require_once PROJECT_ROOT . "/models/link.php";
-require_once PROJECT_ROOT . "/models/pack.php";
+require_once PROJECT_ROOT . "/src/models/anime.php";
+require_once PROJECT_ROOT . "/src/models/season.php";
+require_once PROJECT_ROOT . "/src/models/episode.php";
+require_once PROJECT_ROOT . "/src/models/link.php";
+require_once PROJECT_ROOT . "/src/models/pack.php";
 
 class AnimeController
 {

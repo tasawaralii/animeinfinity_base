@@ -90,6 +90,7 @@ class Helper
 
     public static function successResponse($data)
     {
+        header("content-type: application/json");
         echo json_encode(
             [
                 'status' => "success",
@@ -101,6 +102,7 @@ class Helper
     }
     public static function errorResponse($message, $status_code = 500)
     {
+        header("content-type: application/json");
         http_response_code($status_code);
         echo json_encode(
             [

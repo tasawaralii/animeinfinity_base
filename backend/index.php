@@ -8,7 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-header("content-type: application/json");
 define("PROJECT_ROOT", __DIR__);
 
 require_once "./env.php";

@@ -1,17 +1,15 @@
 <?php
+
 class AnimeDB
 {
-
-    // Table Name: Animes
-    // columns = slug, anime_tmdb_id , anime_name , backdrop_img, poster_img , overview, duration, rating, anime_rel_date, links_update, content_id
-
+    // tablename = animes
+    // columns = slug, anime_tmdb_id , anime_name ,backdrop_source, backdrop_img, poster_source, poster_img, age_id , overview, duration, rating, type, anime_rel_date, links_update, content_id
     private $db;
+
     public function __construct()
     {
         $this->db = Database::getInstance()->getConnection();
     }
-
-
     public function get_animes($filters, $limit = 20)
     {
         $whereClause = [];
@@ -186,4 +184,75 @@ class AnimeDB
         $res = $stmt->fetch();
         return $res;
     }
+
+    public function addGenresToAnime($anime_id, $genres)
+    {
+        $genre_ids = [];
+
+        foreach ($genres as $g) {
+            $genre_id = $this->getGenreIdBySid($g);
+            if ($genre_id) {
+                $genre_ids[] = $genre_id;
+            }
+        }
+
+        if (empty($genre_ids)) {
+            return false;
+        }
+
+        $genre_ids = array_unique($genre_ids);
+
+        $placeholders = [];
+        $values = [];
+
+        foreach ($genre_ids as $gid) {
+            $placeholders[] = "(?, ?)";
+            $values[] = $anime_id;
+            $values[] = $gid;
+        }
+
+        $sql = "INSERT INTO anime_genres (anime_id, genre_id) VALUES " . implode(",", $placeholders);
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($values);
+    }
+
+
+    public function getGenreIdBySid($genre_sid)
+    {
+        $sql = "SELECT genre_id FROM genres WHERE genre_sid = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$genre_sid]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ? $row['genre_id'] : null;
+    }
+
+    public function getGenresOfAnime($anime_id)
+    {
+        $stmt = $this->db->prepare(
+            "SELECT g.genre_sid 
+         FROM anime_genres ag 
+         JOIN genres g ON g.genre_id = ag.genre_id
+         WHERE ag.anime_id = ?"
+        );
+
+        $stmt->execute([$anime_id]);
+
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public function replaceGenresForAnime($anime_id, $genres)
+    {
+        $stmt = $this->db->prepare("DELETE FROM anime_genres WHERE anime_id = ?");
+        $stmt->execute([$anime_id]);
+
+        if (!is_array($genres) || count($genres) === 0) {
+            return true;
+        }
+
+        return $this->addGenresToAnime($anime_id, $genres);
+    }
+
 }

@@ -8,12 +8,11 @@ class Database
 
     private function __construct()
     {
-        $server = $_ENV['DB_SERVER'];
-        $host = $_ENV['DB_HOST'];
-        $db = $_ENV['DB_NAME'];
-        $user = $_ENV['DB_USER'];
-        $pass = $_ENV['DB_PASSWORD'];
-        // $charset = 'utf8mb4';
+        $server = $_ENV['DBSERVER'];
+        $host = $_ENV['DBHOST'];
+        $db = $_ENV['DBNAME'];
+        $user = $_ENV['DBUSER'];
+        $pass = $_ENV['DBPASS'];
 
         $dsn = "{$server}:host={$host};dbname={$db};";
         $options = [

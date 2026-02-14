@@ -1,8 +1,8 @@
 <?php
 
-require_once PROJECT_ROOT . "/models/anime.php";
-require_once PROJECT_ROOT . "/models/season.php";
-require_once PROJECT_ROOT . "/models/episode.php";
+require_once PROJECT_ROOT . "/src/models/anime.php";
+require_once PROJECT_ROOT . "/src/models/season.php";
+require_once PROJECT_ROOT . "/src/models/episode.php";
 class AnimeController
 {
 

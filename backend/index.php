@@ -24,12 +24,37 @@ $router->get("/", function () {
 });
 
 
+$router->get("/link/animes", [$linkController, "getAnimes"]);
+$router->get("/link/anime/{anime_id}/seasons", [$linkController, "getSeasons"]);
+$router->get("/link/season/{season_id}/episodes", [$linkController, "getEpisodes"]);
+$router->get("/link/season/{season_id}/packs", [$linkController, "getPacks"]);
+
+$router->get("/link/drive/fetch-folder", [$linkController, "fetchFolderFiles"]);
+
+$router->post("/link/movie/{content_id}", [$linkController, "addLink"]);
+$router->post("/link/episode/{content_id}", [$linkController, "addLink"]);
+$router->post("/link/season/{season_id}", [$linkController, "addSeasonEpisodeLink"]);
+$router->post("/link/pack/{content_id}", [$linkController, "addLink"]);
+
+$router->get("/links", [$uploadController, "getLinks"]);
+$router->get("/links/{link_id}", [$uploadController, "getLink"]);
+$router->get("/links/{link_id}/servers", [$linkController, "getServers"]);
+
+$router->post("/add/server/{server_sid}/link/{link_id}", [$uploadController, "addServer"]);
+
 $router->post("/add/anime", [$animeController, "addAnime"]);
 $router->get("/list/anime", [$animeController, "getAnimes"]);
 $router->get("/anime/{anime_id}", [$animeController, "getAnimeById"]);
+$router->put("/anime/{anime_id}", [$animeController, "updateAnime"]);
 $router->post("/anime/{anime_id}/add/season", [$animeController, "addSeasonToAnime"]);
 
 $router->get("/season/{season_id}", [$animeController, 'getSeasonById']);
+$router->put("/season/{season_id}", [$animeController, 'updateSeason']);
 $router->post("/season/{season_id}/add/episode", [$animeController, "addEpisodeToSeason"]);
+$router->post("/season/{season_id}/add/episodes", [$animeController, "addEpisodesToSeason"]);
+$router->post("/season/{season_id}/add/pack", [$animeController, "addPackToSeason"]);
+
+$router->get("/episode/{episode_id}", [$animeController, "getEpisodeById"]);
+$router->put("/episode/{episode_id}", [$animeController, "updateEpisode"]);
 
 $router->resolve();

@@ -13,41 +13,6 @@ class UploadController
         $this->linkdb = new LinkDB();
         $this->linkServerdb = new LinkServerDB();
     }
-
-    public static function uploadHubcloud($params, $data)
-    {
-        if (!isset($data['gdrive_id'])) {
-            Helper::errorResponse("No gdrive_id Provided");
-        }
-
-        $gdrive_id = $data['gdrive_id'];
-
-        try {
-            $hubcloudResponse = Helper::uploadHubcloud($gdrive_id);
-
-            Helper::successResponse($hubcloudResponse);
-        } catch (Throwable $e) {
-            Helper::errorResponse($e->getMessage());
-        }
-    }
-
-    public static function uploadFilepress($params, $data)
-    {
-        if (!isset($data['gdrive_id'])) {
-            Helper::errorResponse("No gdrive_id Provided");
-        }
-
-        $gdrive_id = $data['gdrive_id'];
-
-        try {
-            $filepressResponse = Helper::uploadFilePress($gdrive_id);
-
-            Helper::successResponse($filepressResponse);
-        } catch (Throwable $e) {
-            Helper::errorResponse($e->getMessage());
-        }
-    }
-
     public function getLink($params, $data)
     {
 
@@ -162,35 +127,6 @@ class UploadController
                 Helper::errorResponse("Failed to create link server", 500);
             }
         } catch (Exception $e) {
-            Helper::errorResponse("Error creating link server: " . $e->getMessage(), 500);
-        }
-
-    }
-
-    public function markServer($params, $data)
-    {
-        try {
-
-            $server_sid = $params['server_sid'];
-            $link_id = $params['link_id'];
-
-            $server = $this->linkServerdb->getServerBysid($server_sid);
-
-            if (!isset($server['server_id'])) {
-                Helper::errorResponse("No server Found with sid $server_sid", 404);
-            }
-
-            $server_id = $server['server_id'];
-
-            $ser_link_id = $this->linkServerdb->mark_uploaded($link_id, $server_id);
-            if ($ser_link_id) {
-                Helper::successResponse([
-                    'message' => "$server_sid marked in $link_id successfully",
-                    'ser_link_id' => $ser_link_id,
-                ]);
-            }
-
-        } catch (\Throwable $e) {
             Helper::errorResponse("Error creating link server: " . $e->getMessage(), 500);
         }
 

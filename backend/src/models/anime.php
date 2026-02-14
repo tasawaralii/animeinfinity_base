@@ -80,9 +80,8 @@ class AnimeDB
                 rating,
                 type,
                 anime_rel_date,
-                links_update,
                 content_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
             $stmt->execute([
@@ -99,7 +98,6 @@ class AnimeDB
                 $data['rating'] ?? null,
                 $data['type'] ?? null,
                 $data['anime_rel_date'] ?? null,
-                $data['links_update'] ?? null,
                 $content_id
             ]);
 

@@ -17,7 +17,6 @@ const Sidebar = () => {
     { path: "/", icon: Home, label: "Home" },
     { path: "/animes", icon: List, label: "All Animes" },
     { path: "/add-anime", icon: Film, label: "Add Anime" },
-    { path: "/add-link-servers", icon: Plus, label: "Link Servers" },
     { path: "/add-links", icon: FishingHook, label: "Add Links" },
   ];
 

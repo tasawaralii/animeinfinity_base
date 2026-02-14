@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../services/anime";
-import tmdbApi from "../services/tmdb";
+import tmdb from "../services/tmdb";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import AnimeForm from "../components/AnimeForm";
@@ -73,7 +73,7 @@ const Anime = () => {
   }, [anime_id]);
 
   const fetchTmdbSeason = async (tmdb_id) => {
-    const res = await tmdbApi.getTMDBDetails(tmdb_id, "tv");
+    const res = await tmdb.getTMDBDetails(tmdb_id, "tv");
     setTmdbSeasons(res.seasons || []);
   };
 
@@ -96,11 +96,7 @@ const Anime = () => {
             </div>
             {anime.poster_img && (
               <img
-                src={tmdbApi.getTMDBImageUrl(
-                  anime.poster_img,
-                  "poster",
-                  "small",
-                )}
+                src={tmdb.getTMDBImageUrl(anime.poster_img, "poster", "small")}
                 alt={anime.anime_name}
                 className="w-20 h-28 object-cover rounded"
               />
@@ -162,7 +158,7 @@ const Anime = () => {
           </div>
         </div>
 
-        {anime.anime_tmdb_id && (
+        {anime.type == "tv" && anime.anime_tmdb_id && (
           <Button
             className="m-2"
             onClick={() => fetchTmdbSeason(anime.anime_tmdb_id)}
@@ -199,30 +195,32 @@ const Anime = () => {
           />
         </Card>
       )}
-      <Card className="mt-4">
-        <p className="text-sm font-medium text-gray-800">Seasons</p>
-        <button
-          onClick={() => setTempFormData(buildSeasonFormData({ anime_id }))}
-        >
-          + Add Season
-        </button>
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {(anime.seasons ?? []).map((s) => (
-            <Link
-              key={s.season_id}
-              to={`/season/${s.season_id}`}
-              className="p-3 border rounded hover:bg-gray-50 text-sm"
-            >
-              <div className="text-xs text-gray-500">
-                Season {s.season_number}
-              </div>
-              <div className="text-gray-800 font-medium">
-                {s.season_name || `Season ${s.season_number}`}
-              </div>
-            </Link>
-          ))}
-        </div>
-      </Card>
+      {anime.type == "tv" && (
+        <Card className="mt-4">
+          <p className="text-sm font-medium text-gray-800">Seasons</p>
+          <button
+            onClick={() => setTempFormData(buildSeasonFormData({ anime_id }))}
+          >
+            + Add Season
+          </button>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {(anime.seasons ?? []).map((s) => (
+              <Link
+                key={s.season_id}
+                to={`/season/${s.season_id}`}
+                className="p-3 border rounded hover:bg-gray-50 text-sm"
+              >
+                <div className="text-xs text-gray-500">
+                  Season {s.season_number}
+                </div>
+                <div className="text-gray-800 font-medium">
+                  {s.season_name || `Season ${s.season_number}`}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </Card>
+      )}
       <SeasonForm
         data={tempFormData}
         anime_id={anime_id}

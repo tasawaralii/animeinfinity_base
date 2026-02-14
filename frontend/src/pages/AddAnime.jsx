@@ -139,7 +139,7 @@ const AddAnime = () => {
                 className="hover:shadow-lg transition-shadow"
               >
                 <div className="flex gap-4">
-                  <div className="w-24 h-36 flex-shrink-0">
+                  <div className="w-24 h-36 shrink-0">
                     {imageUrl ? (
                       <img
                         src={imageUrl}

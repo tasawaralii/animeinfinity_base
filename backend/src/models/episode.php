@@ -3,14 +3,13 @@
 class EpisodeDB
 {
     // Table Name: episodes
-    // Columns: episode_id, season_id, episode_name, episode_number, img, air_date, overview, content_id
-
+    // Columns: episode_id, season_id, episode_name, note, episode_number, part ,	img, air_date, overview, content_id
     private $db;
+
     public function __construct()
     {
         $this->db = Database::getInstance()->getConnection();
     }
-
 
     public function getEpisode($episode_id)
     {
@@ -22,7 +21,6 @@ class EpisodeDB
     public function insertEpisode($season_id, $data)
     {
         try {
-            $this->db->beginTransaction();
 
             $stmt = $this->db->prepare("INSERT INTO content (content_type) VALUES ('episode')");
             $stmt->execute();
@@ -64,11 +62,8 @@ class EpisodeDB
             $stmt = $this->db->prepare("UPDATE content SET respective_id = ? WHERE id = ?");
             $stmt->execute([$episode_id, $content_id]);
 
-            $this->db->commit();
-
             return $episode_id;
         } catch (Throwable $e) {
-            $this->db->rollBack();
             throw $e;
         }
 

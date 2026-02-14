@@ -15,9 +15,16 @@ require_once "./src/lib/Router.php";
 require_once "./src/lib/Helper.php";
 require_once "./src/lib/Database.php";
 require_once "./src/controllers/anime.php";
+require_once "./src/controllers/cron.php";
+require_once "./src/controllers/link.php";
+require_once "./src/controllers/upload.php";
 
 $router = new Router();
+$linkController = new LinkController();
+$uploadController = new UploadController();
+$cronController = new CronController();
 $animeController = new AnimeController();
+
 
 $router->get("/", function () {
     Helper::successResponse("Working");

@@ -5,6 +5,8 @@ import Animes from "./pages/Animes";
 import NotFound from "./pages/NotFound";
 import AddAnime from "./pages/AddAnime";
 import Anime from "./pages/Anime";
+import Season from "./pages/Season";
+import Episode from "./pages/Episode";
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
           <Route path="/animes" element={<Animes />} />
           <Route path="/anime/:anime_id" element={<Anime />} />
           <Route path="/add-anime" element={<AddAnime />} />
+          <Route path="/season/:season_id" element={<Season />} />
+          <Route path="/episode/:episode_id" element={<Episode />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes> 

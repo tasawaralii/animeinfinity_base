@@ -42,7 +42,8 @@ class LinkDB
             mimetype       = VALUES(mimetype),
             duration       = VALUES(duration),
             note           = VALUES(note),
-            only_hindi     = VALUES(only_hindi)
+            only_hindi     = VALUES(only_hindi),
+            updated_date = NOW()
     ");
 
 
@@ -160,13 +161,12 @@ class LinkDB
         $stmt->execute($whereParams);
         return $stmt->fetchAll();
     }
-
-    public function get_queue_server($server_sid, $limit = 1)
+    public function get_queue_server($server_sid, $limit = 1, $max_size = null)
     {
-        $stmt = $this->db->prepare("
+        $sql = "
             SELECT l.*
             FROM links l
-            WHERE l.added_date >= '2026-02-05'
+            WHERE l.updated_date >= '2026-02-05'
             AND NOT EXISTS (
                 SELECT 1
                 FROM link_servers ls
@@ -174,28 +174,62 @@ class LinkDB
                 WHERE ls.link_id = l.link_id
                 AND si.server_sid = ?
             )
-            ORDER BY l.link_id DESC
-            LIMIT $limit
-        ");
+        ";
 
-        $stmt->execute([$server_sid]);
+        $params = [$server_sid];
+
+        if ($max_size !== null) {
+            $sql .= " AND l.size <= ? ";
+            $params[] = $max_size * 1024 * 1024;
+        }
+
+        $sql .= " ORDER BY l.link_id DESC ";
+
+        if ($limit !== null) {
+            $limit = (int) $limit;
+            $sql .= " LIMIT $limit ";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
         $links = $stmt->fetchAll();
 
         if ($links && $limit == 1) {
             return $links[0];
         }
+
         return $links;
     }
 
-    public function get_pending_status($server_id, $limit = 1)
+
+    public function get_pending_status($server_sid, $limit = 1)
     {
         $stmt = $this->db->prepare(
-            "SELECT * 
+            "SELECT l.*
             FROM links l 
             JOIN link_servers ls ON ls.link_id = l.link_id
             JOIN server_info si ON si.server_id = ls.server_id
-            WHERE ls.
+            WHERE ls.is_uploaded = 1 AND ls.slug = ''
+            AND si.server_sid = ?
+            ORDER BY ls.ser_link_id ASC
+            LIMIT $limit
             "
         );
+
+        $stmt->execute([$server_sid]);
+        $links = $stmt->fetchAll();
+        if ($links && $limit == 1) {
+            return $links[0];
+        }
+
+        return $links;
+    }
+
+    public function getLinksOfContent($content_id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM links WHERE content_id = ?");
+        $stmt->execute([$content_id]);
+        return $stmt->fetchAll();
     }
 }

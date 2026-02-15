@@ -29,6 +29,11 @@ const defaultPackFormData = {
   end_ep: "",
 };
 
+const defaultDefaultEpisodeFormData = {
+  default_start_ep: "",
+  default_end_ep: "",
+};
+
 const buildEpisodeFormData = (overrides = {}) => ({
   ...defaultEpisodeFormData,
   ...overrides,
@@ -89,8 +94,15 @@ const Season = () => {
   const [tempEpisodeFormData, setTempEpisodeFormData] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false);
   const [selectedEpisodeIds, setSelectedEpisodeIds] = useState(new Set());
+
   const [showPackForm, setShowPackForm] = useState(false);
   const [packFormData, setPackFormData] = useState(defaultPackFormData);
+
+  const [showDefaultEpisodeForm, setShowDefaultEpisodeForm] = useState(false);
+  const [defaultEpisodeFormData, setDefaultEpisodeFormData] = useState(
+    defaultDefaultEpisodeFormData,
+  );
+
   const { season_id } = useParams();
 
   useEffect(() => {
@@ -190,6 +202,16 @@ const Season = () => {
     setPackFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleDefaultEpisodeChange = (event) => {
+    const { name, value } = event.target;
+    setDefaultEpisodeFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const closeDefaultEpisodeForm = () => {
+    setShowDefaultEpisodeForm(false);
+    setDefaultEpisodeFormData(defaultDefaultEpisodeFormData);
+  };
+
   const addPack = async () => {
     if (!packFormData.start_ep || !packFormData.end_ep) {
       alert("Start and end episodes are required");
@@ -209,6 +231,43 @@ const Season = () => {
       }
       setPackFormData(defaultPackFormData);
       setShowPackForm(false);
+      await fetchSeason();
+    } catch (error) {
+      console.log(error);
+      alert("Failed");
+    }
+  };
+
+  const addDefaultEpisodes = async () => {
+    const start = Number(defaultEpisodeFormData.default_start_ep);
+    const end = Number(defaultEpisodeFormData.default_end_ep);
+
+    if (!Number.isInteger(start) || !Number.isInteger(end)) {
+      alert("Start and end episodes are required");
+      return;
+    }
+
+    if (start <= 0 || end <= 0) {
+      alert("Start and end episodes must be greater than 0");
+      return;
+    }
+
+    if (end < start) {
+      alert("End episode must be greater than or equal to start episode");
+      return;
+    }
+
+    const episodes = Array.from(
+      { length: end - start + 1 },
+      (_, index) => start + index,
+    );
+
+    try {
+      const res = await api.addDefaultEpisodes(season_id, { episodes });
+      if (res?.status === "success") {
+        alert(`${episodes.length} Episode(s) Added`);
+      }
+      closeDefaultEpisodeForm();
       await fetchSeason();
     } catch (error) {
       console.log(error);
@@ -323,7 +382,43 @@ const Season = () => {
           >
             + Add Episode
           </button>
+          <button
+            className="ml-4 bg-amber-300"
+            onClick={() => setShowDefaultEpisodeForm(true)}
+          >
+            + Add Episode range
+          </button>
         </p>
+        {showDefaultEpisodeForm && (
+          <Card className="mt-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <Input
+                label="Start Episode"
+                name="default_start_ep"
+                type="number"
+                value={defaultEpisodeFormData.default_start_ep}
+                onChange={handleDefaultEpisodeChange}
+                required
+              />
+              <Input
+                label="End Episode"
+                name="default_end_ep"
+                type="number"
+                value={defaultEpisodeFormData.default_end_ep}
+                onChange={handleDefaultEpisodeChange}
+                required
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="success" onClick={addDefaultEpisodes}>
+                Add Episodes
+              </Button>
+              <Button variant="secondary" onClick={closeDefaultEpisodeForm}>
+                Cancel
+              </Button>
+            </div>
+          </Card>
+        )}
       </Card>
       <Card className="mt-4">
         <p className="text-center">

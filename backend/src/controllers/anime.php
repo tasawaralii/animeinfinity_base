@@ -292,4 +292,35 @@ class AnimeController
         }
     }
 
+    public function addDefaultEpisodesToSeason($params, $data)
+    {
+        if (!is_array($data['episodes'])) {
+            Helper::errorResponse("Expected Array of Episodes", 403);
+        }
+
+        $season_id = $params['season_id'];
+        $episodes = $data['episodes'];
+        try {
+
+            $episodesRes = [];
+
+            $this->db->beginTransaction();
+
+            foreach ($episodes as $episode_number) {
+                $episode_id = $this->episodedb->insertDefaultEpisode($season_id, $episode_number);
+                $episodesRes[] = $episode_id;
+            }
+
+            $this->db->commit();
+
+            Helper::successResponse([
+                "status" => "success",
+                "episodes" => $episodesRes
+            ]);
+        } catch (Throwable $e) {
+            $this->db->rollBack();
+            Helper::errorResponse($e->getMessage());
+        }
+    }
+
 }

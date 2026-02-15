@@ -1,5 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost:5174");
+header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
@@ -59,6 +59,7 @@ $router->get("/season/{season_id}", [$animeController, 'getSeasonById']);
 $router->put("/season/{season_id}", [$animeController, 'updateSeason']);
 $router->post("/season/{season_id}/add/episode", [$animeController, "addEpisodeToSeason"]);
 $router->post("/season/{season_id}/add/episodes", [$animeController, "addEpisodesToSeason"]);
+$router->post("/season/{season_id}/add/default-episodes", [$animeController, "addDefaultEpisodesToSeason"]);
 $router->post("/season/{season_id}/add/pack", [$animeController, "addPackToSeason"]);
 
 $router->get("/episode/{episode_id}", [$animeController, "getEpisodeById"]);

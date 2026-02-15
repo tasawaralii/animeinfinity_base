@@ -52,6 +52,14 @@ class AnimeApi {
     return res.data.data;
   }
 
+  async addDefaultEpisodes(season_id, data) {
+    const res = await this.api.post(
+      `/season/${season_id}/add/default-episodes`,
+      data,
+    );
+    return res.data.data;
+  }
+
   async listAnime(filters) {
     const params = new URLSearchParams(filters);
     const url = "/list/anime?" + params.toString();

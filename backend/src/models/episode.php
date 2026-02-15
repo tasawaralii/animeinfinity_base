@@ -125,4 +125,41 @@ class EpisodeDB
         $stmt->execute([$content_id]);
 
     }
+
+    public function insertDefaultEpisode($season_id, $episode_number)
+    {
+        try {
+
+            $stmt = $this->db->prepare("INSERT INTO content (content_type) VALUES ('episode')");
+            $stmt->execute();
+
+            $content_id = $this->db->lastInsertId();
+
+            $stmt = $this->db->prepare("
+                INSERT INTO episodes (
+                    season_id,
+                    episode_name,
+                    episode_number,
+                    content_id
+                ) VALUES (?, ?, ?, ?)
+            ");
+
+            $stmt->execute([
+                $season_id,
+                "Episode {$episode_number}",
+                $episode_number,
+                $content_id
+            ]);
+
+            $episode_id = $this->db->lastInsertId();
+
+            $stmt = $this->db->prepare("UPDATE content SET respective_id = ? WHERE id = ?");
+            $stmt->execute([$episode_id, $content_id]);
+
+            return $episode_id;
+        } catch (Throwable $e) {
+            throw $e;
+        }
+
+    }
 }
